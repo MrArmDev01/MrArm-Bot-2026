@@ -124,7 +124,7 @@ class RealVerify(commands.Cog):
 
         await interaction.response.send_message(embed=setup_embed, ephemeral=True)
 
-    @app_commands.command(name="setup_verify_ui", description="Send the verification UI to this channel")
+    @app_commands.command(name="setup_verify_ui-prank", description="Send the verification UI to this channel")
     @app_commands.checks.has_permissions(administrator=True)
     async def setup_verify_ui(self, interaction: discord.Interaction):
         embed = discord.Embed(
