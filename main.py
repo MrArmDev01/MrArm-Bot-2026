@@ -31,22 +31,22 @@ class MyBot(commands.Bot):
         await self.tree.sync()
 
     async def on_ready(self):
-        # ตั้งค่าสถานะ Streaming สำหรับ Nena
-        # ใช้ชื่อเพลง และลิงก์ที่คุณส่งมา (Discord จะแสดงเป็นสถานะสีม่วง)
+        # ตั้งค่าสถานะ Streaming โดยใช้ลิงก์ YouTube เพื่อให้ขึ้นสีม่วงและมีปุ่ม Watch
         activity = discord.Streaming(
-            name="Love You💕",
-            url="https://www.youtube.com/watch?v=F07G92S_vTo" # ลิงก์ YouTube ของเพลงนี้        )
+            name="ไอ้เด็กคนนี้ - NICK KIT 🎵",
+            url="https://www.youtube.com/watch?v=F07G92S_vTo" 
+        )
         await self.change_presence(activity=activity)
         
         print(f'🚀 Logged in as {self.user} (Nena)')
-        print(f'💜 Streaming status set: {activity.name}')
+        print(f'💜 Streaming status (YouTube) set for Nena')
 
 bot = MyBot()
 
-# ดึง Token จาก Environment Variable ใน Railway
+# ดึง Token จาก Railway
 TOKEN = os.getenv("DISCORD_TOKEN")
+
 if TOKEN:
     bot.run(TOKEN)
 else:
     print("❌ Error: DISCORD_TOKEN not found in environment variables.")
-
