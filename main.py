@@ -1,53 +1,45 @@
-import discord 
+import discord
 from discord.ext import commands
 import os
 import asyncio
 
 class MyBot(commands.Bot):
     def __init__(self):
-        # Setup Intents
-        intents = discord.Intents.default()
-        intents.members = True
-        intents.message_content = True
-        intents.guilds = True 
+        intents = discord.Intents.all()
         super().__init__(command_prefix="!", intents=intents)
 
     async def setup_hook(self):
-        print("--- Loading Cogs ---")
-        # ระบบ Auto-load: วนลูปหาไฟล์ทุกไฟล์ในโฟลเดอร์ cogs
-        for filename in os.listdir('./cogs'):
-            if filename.endswith('.py'):
-                try:
-                    # ตัดนามสกุล .py ออกแล้วโหลด
-                    cog_name = f'cogs.{filename[:-3]}'
-                    await self.load_extension(cog_name)
-                    print(f'✅ Loaded: {filename}')
-                except Exception as e:
-                    print(f'❌ Failed to load {filename}: {e}')
+        # รายชื่อไฟล์ที่คุณต้องการให้บอทโหลด (ตามรูปที่คุณส่งมา)
+        # เราจะไม่โหลด main.py และ requirements.txt เข้าตัวเอง
+        extensions = [
+            'ticket_pro',
+            'verify',
+            'roblox_info',
+            'server_setup',
+            'fun_commands',
+            'ghost_ping',
+            'mimic',
+            'fake_nitro',
+            'fake_payout',
+            'fake_call',
+            'crash_prank',
+            'quarantine_prank'
+        ]
+        
+        for ext in extensions:
+            try:
+                await self.load_extension(ext)
+                print(f'✅ Loaded: {ext}')
+            except Exception as e:
+                print(f'❌ Failed to load {ext}: {e}')
+                
+        await self.tree.sync()
 
-        print("--- Syncing Commands ---")
-        # Sync Slash Commands เข้ากับ Discord
-        try:
-            await self.tree.sync()
-            print("✅ Synced Slash Commands!")
-        except Exception as e:
-            print(f"❌ Failed to sync commands: {e}")
+    async def on_ready(self):
+        print(f'🚀 Logged in as {self.user}')
 
 bot = MyBot()
 
-@bot.event
-async def on_ready():
-    print(f'🚀 Bot is online as: {bot.user}')
-    print(f'Running in {len(bot.guilds)} servers')
-
-# Run Bot
-try:
-    # สำหรับ Replit ใช้ os.getenv('TOKEN') หรือ os.environ.get('TOKEN')
-    token = os.environ.get('DISCORD_TOKEN')
-    if token:
-        bot.run(token)
-    else:
-        print("❌ Error: TOKEN not found in Replit Secrets")
-except Exception as e:
-    print(f"❌ Startup Error: {e}")
-
+# ดึง Token จาก Environment Variable ใน Railway
+TOKEN = os.getenv("DISCORD_TOKEN")
+bot.run(TOKEN)
