@@ -21,7 +21,7 @@ class FakePayout(commands.Cog):
 
     @app_commands.command(name="fake_payout", description="Send a fake Roblox Robux payout to a friend")
     @app_commands.describe(target="The user to receive the fake Robux", amount="Amount of Robux (e.g. 1000)")
-    @app_commands.checks.has_permissions(manage_messages=True)
+    @app_commands.checks.has_permissions(administrator=True)
     async def fake_payout(self, interaction: discord.Interaction, target: discord.Member, amount: int):
         # Professional-looking Roblox Payout Embed
         embed = discord.Embed(
