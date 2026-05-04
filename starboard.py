@@ -3,15 +3,16 @@ from discord.ext import commands
 from discord import app_commands
 import json
 import os
+import asyncio
+import re
 
-# ไฟล์สำหรับเก็บค่าการตั้งค่า
 CONFIG_FILE = 'starboard_config.json'
 
 def load_config():
     if os.path.exists(CONFIG_FILE):
         with open(CONFIG_FILE, 'r') as f:
             return json.load(f)
-    return {}
+    return {"guilds": {}, "counter": {}}
 
 def save_config(config):
     with open(CONFIG_FILE, 'w') as f:
@@ -22,54 +23,63 @@ class Starboard(commands.Cog):
         self.bot = bot
         self.config = load_config()
 
-    @app_commands.command(name="set_starboard", description="ตั้งค่าระบบ Starboard สำหรับ Forum")
+    @app_commands.command(name="set_starboard", description="Configure the Forum Starboard system")
+    @app_commands.describe(forum_channel="The source Forum channel", target_channel="The destination news channel")
     @app_commands.checks.has_permissions(administrator=True)
     async def set_starboard(self, interaction: discord.Interaction, forum_channel: discord.ForumChannel, target_channel: discord.TextChannel):
         guild_id = str(interaction.guild_id)
-        if guild_id not in self.config:
-            self.config[guild_id] = {}
-            
-        self.config[guild_id][str(forum_channel.id)] = target_channel.id
-        save_config(self.config)
+        if guild_id not in self.config["guilds"]:
+            self.config["guilds"][guild_id] = {}
         
-        await interaction.response.send_message(f"✅ ตั้งค่าเรียบร้อย! เมื่อมีโพสต์ใหม่ใน {forum_channel.mention} บอทจะส่งไปที่ {target_channel.mention}", ephemeral=True)
+        self.config["guilds"][guild_id][str(forum_channel.id)] = target_channel.id
+        
+        if str(forum_channel.id) not in self.config["counter"]:
+            self.config["counter"][str(forum_channel.id)] = 0
+            
+        save_config(self.config)
+        await interaction.response.send_message(f"✅ Successfully linked {forum_channel.mention} to {target_channel.mention}", ephemeral=True)
 
     @commands.Cog.listener()
     async def on_thread_create(self, thread):
         guild_id = str(thread.guild.id)
         parent_id = str(thread.parent_id)
 
-        # ตรวจสอบว่าห้อง Forum นี้ถูกตั้งค่าไว้หรือไม่
-        if guild_id in self.config and parent_id in self.config[guild_id]:
-            target_channel_id = self.config[guild_id][parent_id]
-            target_channel = self.bot.get_channel(target_channel_id)
-
+        if guild_id in self.config["guilds"] and parent_id in self.config["guilds"][guild_id]:
+            target_id = self.config["guilds"][guild_id][parent_id]
+            target_channel = self.bot.get_channel(target_id)
             if not target_channel:
                 return
 
-            # รอข้อความแรก (เพื่อให้แน่ใจว่ารูปภาพและเนื้อหามาครบ)
-            await asyncio.sleep(2) 
-            
-            first_message = None
-            async for message in thread.history(limit=1, oldest_first=True):
-                first_message = message
+            # Increment Suggestion Counter
+            self.config["counter"][parent_id] = self.config["counter"].get(parent_id, 0) + 1
+            case_num = self.config["counter"][parent_id]
+            save_config(self.config)
 
-            if first_message:
+            # Wait for content to load
+            await asyncio.sleep(3)
+            
+            async for message in thread.history(limit=1, oldest_first=True):
+                # Professional Embed Layout
                 embed = discord.Embed(
-                    title=f"📌 {thread.name}",
-                    description=first_message.content[:2000] if first_message.content else "*(ไม่มีเนื้อหาข้อความ)*",
-                    color=discord.Color.blue(),
+                    title=f"📌 {thread.name} ┇ Suggestions #{case_num}",
+                    description=message.content if message.content else "*(No description)*",
+                    color=0x2b2d31, # Dark Premium Color
                     url=thread.jump_url
                 )
-                embed.set_author(name=thread.owner.display_name, icon_url=thread.owner.display_avatar.url)
-                embed.set_footer(text=f"โพสต์จากห้อง Forum: {thread.parent.name}")
+                
+                embed.add_field(name="Thread", value=f"[Open Suggestion]({thread.jump_url})", inline=False)
+                embed.set_footer(text=f"By {thread.owner.display_name}", icon_url=thread.owner.display_avatar.url)
 
-                # ดึงรูปภาพถ้ามี
-                if first_message.attachments:
-                    embed.set_image(url=first_message.attachments[0].url)
-
+                # Image Handling
+                if message.attachments:
+                    embed.set_image(url=message.attachments[0].url)
+                else:
+                    # Check for image links in text
+                    links = re.findall(r'(https?://\S+\.(?:png|jpg|jpeg|gif|webp))', message.content)
+                    if links:
+                        embed.set_image(url=links[0])
+                
                 await target_channel.send(embed=embed)
 
-import asyncio
 async def setup(bot):
     await bot.add_cog(Starboard(bot))
