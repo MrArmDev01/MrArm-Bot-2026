@@ -10,7 +10,7 @@ class BotAdmin(commands.Cog):
     # 1. Change Nickname (Free for all servers)
     @app_commands.command(name="server_set_name", description="Change bot's nickname in THIS server only")
     @app_commands.describe(new_name="Enter nickname for this server")
-    @app_commands.checks.has_permissions(manage_nicknames=True)
+    @app_commands.checks.has_permissions(administrator=True)
     async def server_set_name(self, interaction: discord.Interaction, new_name: str):
         try:
             await interaction.guild.me.edit(nick=new_name)
