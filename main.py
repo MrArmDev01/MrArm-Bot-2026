@@ -43,7 +43,7 @@ async def on_ready():
 # Run Bot
 try:
     # สำหรับ Replit ใช้ os.getenv('TOKEN') หรือ os.environ.get('TOKEN')
-    token = os.environ.get('TOKEN')
+    token = os.environ.get('DISCORD_TOKEN')
     if token:
         bot.run(token)
     else:
