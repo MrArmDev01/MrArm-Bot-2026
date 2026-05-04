@@ -37,6 +37,7 @@ class FunCommands(commands.Cog):
 
     @app_commands.command(name="dm_user", description="Send a DM with a reply button")
     @app_commands.describe(user="Who to send to?", message="What to say?")
+    @app_commands.checks.has_permissions(administrator=True) # เพิ่มบรรทัดนี้: เฉพาะแอดมินเท่านั้นที่ใช้คำสั่งนี้ได้
     async def dm_user(self, interaction: discord.Interaction, user: discord.User, message: str):
         await interaction.response.send_message(f"📤 Sending message to {user.name}...", ephemeral=True)
 
