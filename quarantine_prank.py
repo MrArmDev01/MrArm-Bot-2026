@@ -9,7 +9,7 @@ class QuarantinePrank(commands.Cog):
 
     @app_commands.command(name="quarantine_user", description="Prank a user by pretending they are quarantined/invisible")
     @app_commands.describe(target="The user to quarantine")
-    @app_commands.checks.has_permissions(manage_messages=True)
+    @app_commands.checks.has_permissions(administrator=True)
     async def quarantine_user(self, interaction: discord.Interaction, target: discord.Member):
         # Admin confirmation (only you see)
         await interaction.response.send_message(f"☣️ Quarantine sequence started for {target.display_name}...", ephemeral=True)
