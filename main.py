@@ -11,17 +11,11 @@ class MyBot(commands.Bot):
     async def setup_hook(self):
         extensions = [
             'ticket_pro',
-            'verify',
             'roblox_info',
             'server_setup',
             'fun_commands',
-            'ghost_ping',
             'mimic',
-            'fake_nitro',
             'fake_payout',
-            'fake_call',
-            'crash_prank',
-            'quarantine_prank',
             'starboard',
             'bot_admin',
             'info_cmd'
