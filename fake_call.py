@@ -28,7 +28,7 @@ class FakeCall(commands.Cog):
 
     @app_commands.command(name="fake_call", description="Start a fake group call prank")
     @app_commands.describe(topic="The topic of the call (e.g. Secret Meeting)")
-    @app_commands.checks.has_permissions(manage_messages=True)
+    @app_commands.checks.has_permissions(administrator=True)
     async def fake_call(self, interaction: discord.Interaction, topic: str = "Group Call"):
         # Create a professional Call Embed
         embed = discord.Embed(
