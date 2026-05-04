@@ -31,20 +31,24 @@ class AppModal(ui.Modal):
         self.scenario = scenario
         
         self.name_age = ui.TextInput(label='1. Name and Age', placeholder='e.g. Nena, 20 years old', required=True)
+        self.timezone = ui.TextInput(label='2. What is your TimeZone?', placeholder='e.g. GMT+7, EST, etc.', required=True)
+        self.experience = ui.TextInput(label='3. Past Experience', style=discord.TextStyle.paragraph, placeholder='Have you been staff before? If yes, where?', required=True) # เพิ่มมา
         self.reason = ui.TextInput(
-            label='2. Why should we choose you?', 
+            label='4. Why should we choose you?', 
             style=discord.TextStyle.paragraph, 
             placeholder='Tell us about your strengths and passion for this community...', 
             required=True
         )
         self.scenario_input = ui.TextInput(
-            label=f'3. Scenario Response ({self.scenario["id"]})',
+            label=f'5. Scenario Response ({self.scenario["id"]})', # ปรับลำดับเป็นข้อ 5
             style=discord.TextStyle.paragraph,
             placeholder=f"Situation: {self.scenario['topic']}\n\nYour Answer...",
             required=True
         )
         
         self.add_item(self.name_age)
+        self.add_item(self.timezone)
+        self.add_item(self.experience) # เพิ่มลงในหน้าต่างกรอก
         self.add_item(self.reason)
         self.add_item(self.scenario_input)
 
@@ -57,7 +61,9 @@ class AppModal(ui.Modal):
         embed.set_thumbnail(url=interaction.user.display_avatar.url)
         embed.add_field(name="Applicant", value=f"{interaction.user.mention} ({interaction.user.name})", inline=True)
         embed.add_field(name="Name/Age", value=self.name_age.value, inline=True)
-        embed.add_field(name="2. Why should we choose you?", value=self.reason.value, inline=False)
+        embed.add_field(name="TimeZone", value=self.timezone.value, inline=True)
+        embed.add_field(name="3. Past Experience", value=self.experience.value, inline=False) # แสดงใน Log
+        embed.add_field(name="4. Why should we choose you?", value=self.reason.value, inline=False)
         embed.add_field(
             name=f" Scenario Response ({self.scenario['id']})", 
             value=f"**Situation:** {self.scenario['topic']}\n\n**Candidate's Answer:**\n{self.scenario_input.value}", 
@@ -84,7 +90,6 @@ class AdminDecisionView(ui.View):
             except:
                 role_msg = "\n❌ Failed to assign role (Check Bot Permissions)."
 
-        # DM แจ้งข่าวดี (แบบยาวและเป็นทางการ)
         try:
             embed_dm = discord.Embed(
                 title="🎊 Congratulations! Your Application is Approved",
@@ -113,7 +118,6 @@ class AdminDecisionView(ui.View):
 
     @ui.button(label='Reject ❌', style=discord.ButtonStyle.danger)
     async def reject(self, interaction: discord.Interaction, button: ui.Button):
-        # DM แจ้งปฏิเสธแบบสุภาพ
         try:
             embed_dm = discord.Embed(
                 title="Staff Application Update",
@@ -147,12 +151,14 @@ class StaffApp(commands.Cog):
         config["log_channel"] = log_channel
         config["staff_role"] = staff_role
         
+        guild_name = interaction.guild.name
+        
         embed = discord.Embed(
-            title="⚔️ {guild_name.upper()} STAFF RECRUITMENT",
+            title=f"⚔️ {guild_name.upper()} STAFF RECRUITMENT",
             description=(
-                "We are looking for dedicated, mature, and active individuals to join our "
-                "Management Team. If you have a passion for helping others and want to "
-                "contribute to the growth of {interaction.guild.name}, this is your chance!"
+                f"We are looking for dedicated, mature, and active individuals to join our "
+                f"Management Team. If you have a passion for helping others and want to "
+                f"contribute to the growth of **{guild_name}**, this is your chance!"
             ),
             color=0x2ecc71
         )
@@ -185,7 +191,7 @@ class StaffApp(commands.Cog):
             inline=False
         )
 
-        embed.set_footer(text="{interaction.guild.name} Management • Click below to apply")
+        embed.set_footer(text=f"{guild_name} Management • Click below to apply")
         
         await interaction.response.send_message("✅ Professional Recruitment Post Created!", ephemeral=True)
         await interaction.channel.send(embed=embed, view=AppView())
