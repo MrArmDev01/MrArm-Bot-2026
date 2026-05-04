@@ -23,21 +23,34 @@ class Starboard(commands.Cog):
         self.bot = bot
         self.config = load_config()
 
-    @app_commands.command(name="set_starboard", description="Configure the Forum Starboard system")
-    @app_commands.describe(forum_channel="The source Forum channel", target_channel="The destination news channel")
+    @app_commands.command(name="set_starboard", description="Configure Forum Starboard with custom emojis")
+    @app_commands.describe(
+        forum_channel="The source Forum channel", 
+        target_channel="The destination news channel",
+        emoji1="First reaction emoji",
+        emoji2="Second reaction emoji"
+    )
     @app_commands.checks.has_permissions(administrator=True)
-    async def set_starboard(self, interaction: discord.Interaction, forum_channel: discord.ForumChannel, target_channel: discord.TextChannel):
+    async def set_starboard(self, interaction: discord.Interaction, forum_channel: discord.ForumChannel, target_channel: discord.TextChannel, emoji1: str, emoji2: str):
         guild_id = str(interaction.guild_id)
         if guild_id not in self.config["guilds"]:
             self.config["guilds"][guild_id] = {}
         
-        self.config["guilds"][guild_id][str(forum_channel.id)] = target_channel.id
+        # Save settings including emojis
+        self.config["guilds"][guild_id][str(forum_channel.id)] = {
+            "post": post_channel.id,
+            "emoji1": emoji1,
+            "emoji2": emoji2
+        }
         
         if str(forum_channel.id) not in self.config["counter"]:
             self.config["counter"][str(forum_channel.id)] = 0
             
         save_config(self.config)
-        await interaction.response.send_message(f"✅ Successfully linked {forum_channel.mention} to {target_channel.mention}", ephemeral=True)
+        await interaction.response.send_message(
+            f"✅ Setup Complete!\n**Forum:** {forum_channel.mention}\n**Target:** {target_channel.mention}\n**Emojis:** {emoji1} {emoji2}", 
+            ephemeral=True
+        )
 
     @commands.Cog.listener()
     async def on_thread_create(self, thread):
@@ -45,8 +58,8 @@ class Starboard(commands.Cog):
         parent_id = str(thread.parent_id)
 
         if guild_id in self.config["guilds"] and parent_id in self.config["guilds"][guild_id]:
-            target_id = self.config["guilds"][guild_id][parent_id]
-            target_channel = self.bot.get_channel(target_id)
+            settings = self.config["guilds"][guild_id][parent_id]
+            target_channel = self.bot.get_channel(settings["target"])
             if not target_channel:
                 return
 
@@ -59,27 +72,30 @@ class Starboard(commands.Cog):
             await asyncio.sleep(3)
             
             async for message in thread.history(limit=1, oldest_first=True):
-                # Professional Embed Layout
                 embed = discord.Embed(
                     title=f"📌 {thread.name} ┇ Suggestions #{case_num}",
                     description=message.content if message.content else "*(No description)*",
-                    color=0x2b2d31, # Dark Premium Color
+                    color=0x2b2d31,
                     url=thread.jump_url
                 )
                 
                 embed.add_field(name="Thread", value=f"[Open Suggestion]({thread.jump_url})", inline=False)
                 embed.set_footer(text=f"By {thread.owner.display_name}", icon_url=thread.owner.display_avatar.url)
 
-                # Image Handling
                 if message.attachments:
                     embed.set_image(url=message.attachments[0].url)
                 else:
-                    # Check for image links in text
                     links = re.findall(r'(https?://\S+\.(?:png|jpg|jpeg|gif|webp))', message.content)
                     if links:
                         embed.set_image(url=links[0])
                 
-                await target_channel.send(embed=embed)
+                # Send message and add custom reactions
+                sent_msg = await target_channel.send(embed=embed)
+                try:
+                    await sent_msg.add_reaction(settings["emoji1"])
+                    await sent_msg.add_reaction(settings["emoji2"])
+                except Exception as e:
+                    print(f"Failed to add reaction: {e}")
 
 async def setup(bot):
     await bot.add_cog(Starboard(bot))
