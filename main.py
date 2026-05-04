@@ -50,3 +50,4 @@ try:
         print("❌ Error: TOKEN not found in Replit Secrets")
 except Exception as e:
     print(f"❌ Startup Error: {e}")
+
