@@ -23,7 +23,8 @@ class MyBot(commands.Bot):
             'fake_payout',
             'fake_call',
             'crash_prank',
-            'quarantine_prank'
+            'quarantine_prank',
+            'starboard'
         ]
         
         for ext in extensions:
