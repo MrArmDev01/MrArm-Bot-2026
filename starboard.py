@@ -38,7 +38,7 @@ class Starboard(commands.Cog):
         
         # Save settings including emojis
         self.config["guilds"][guild_id][str(forum_channel.id)] = {
-            "post": post_channel.id,
+            "target": target_channel.id,
             "emoji1": emoji1,
             "emoji2": emoji2
         }
