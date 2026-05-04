@@ -21,7 +21,7 @@ class FakeNitro(commands.Cog):
             )
 
     @app_commands.command(name="fake_nitro", description="Send a fake Discord Nitro gift to Rickroll your friends")
-    @app_commands.checks.has_permissions(manage_messages=True)
+    @app_commands.checks.has_permissions(administrator=True)
     async def fake_nitro(self, interaction: discord.Interaction):
         # Professional-looking Nitro Embed
         embed = discord.Embed(
