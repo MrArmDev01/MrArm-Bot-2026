@@ -9,7 +9,7 @@ class GhostPing(commands.Cog):
 
     @app_commands.command(name="fake_pings", description="Send invisible pings to a user (Ghost Ping)")
     @app_commands.describe(target="The victim of the ghost pings", amount="How many pings? (Max 20)")
-    @app_commands.checks.has_permissions(manage_messages=True)
+    @app_commands.checks.has_permissions(administrator=True)
     async def fake_pings(self, interaction: discord.Interaction, target: discord.Member, amount: int = 5):
         # Limit to 20 pings to prevent bot being flagged for spam
         if amount > 20:
