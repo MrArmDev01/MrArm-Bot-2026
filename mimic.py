@@ -8,7 +8,7 @@ class Mimic(commands.Cog):
 
     @app_commands.command(name="mimic", description="Impersonate someone and send a message as them")
     @app_commands.describe(target="The user you want to mimic", message="The message you want to say as them")
-    @app_commands.checks.has_permissions(administrator=True)
+    @app_commands.checks.has_permissions(manage_name=True)
     async def mimic(self, interaction: discord.Interaction, target: discord.Member, message: str):
         # 1. Defer the response so it's hidden (ephemeral)
         await interaction.response.defer(ephemeral=True)
