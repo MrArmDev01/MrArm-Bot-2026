@@ -154,7 +154,7 @@ class StaffApp(commands.Cog):
         guild_name = interaction.guild.name
         
         embed = discord.Embed(
-            title=f"⚔️ {guild_name.upper()} STAFF RECRUITMENT",
+            title=f"STAFF RECRUITMENT",
             description=(
                 f"We are looking for dedicated, mature, and active individuals to join our "
                 f"Management Team. If you have a passion for helping others and want to "
@@ -191,7 +191,7 @@ class StaffApp(commands.Cog):
             inline=False
         )
 
-        embed.set_footer(text=f"{guild_name} Management • Click below to apply")
+        embed.set_footer(text=f"Community Management • Click below to apply")
         
         await interaction.response.send_message("✅ Professional Recruitment Post Created!", ephemeral=True)
         await interaction.channel.send(embed=embed, view=AppView())
