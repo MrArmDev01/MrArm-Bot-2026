@@ -6,7 +6,7 @@ class ServerSetup(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @app_commands.command(name="setup_server", description="Automatically Make Server (Categories & Channels)")
+    @app_commands.command(name="setup_server", description="Automatically Make Server (Categories & Channels & Roles)")
     @app_commands.checks.has_permissions(administrator=True)
     async def setup_server(self, interaction: discord.Interaction):
         # Notify the user that the process has started
