@@ -9,8 +9,6 @@ class MyBot(commands.Bot):
         super().__init__(command_prefix="!", intents=intents)
 
     async def setup_hook(self):
-        # รายชื่อไฟล์ที่คุณต้องการให้บอทโหลด (ตามรูปที่คุณส่งมา)
-        # เราจะไม่โหลด main.py และ requirements.txt เข้าตัวเอง
         extensions = [
             'ticket_pro',
             'verify',
@@ -39,10 +37,22 @@ class MyBot(commands.Bot):
         await self.tree.sync()
 
     async def on_ready(self):
-        print(f'🚀 Logged in as {self.user}')
+        # ตั้งค่าสถานะ Streaming สำหรับ Nena
+        # ใช้ชื่อเพลง และลิงก์ที่คุณส่งมา (Discord จะแสดงเป็นสถานะสีม่วง)
+        activity = discord.Streaming(
+            name="ไอ้เด็กคนนี้ - NICK KIT 🎵",
+            url="https://open.spotify.com/track/4tZR81UBfYl1C1k2oamG8h?si=Q63-QLKlTPWvN6Yka8RHXQ"
+        )
+        await self.change_presence(activity=activity)
+        
+        print(f'🚀 Logged in as {self.user} (Nena)')
+        print(f'💜 Streaming status set: {activity.name}')
 
 bot = MyBot()
 
 # ดึง Token จาก Environment Variable ใน Railway
 TOKEN = os.getenv("DISCORD_TOKEN")
-bot.run(TOKEN)
+if TOKEN:
+    bot.run(TOKEN)
+else:
+    print("❌ Error: DISCORD_TOKEN not found in environment variables.")
