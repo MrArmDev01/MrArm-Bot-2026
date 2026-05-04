@@ -18,7 +18,8 @@ class MyBot(commands.Bot):
             'fake_payout',
             'starboard',
             'bot_admin',
-            'info_cmd'
+            'info_cmd',
+            'staff_app'
         ]
         
         for ext in extensions:
