@@ -24,7 +24,8 @@ class MyBot(commands.Bot):
             'fake_call',
             'crash_prank',
             'quarantine_prank',
-            'starboard'
+            'starboard',
+            'bot_admin'
         ]
         
         for ext in extensions:
