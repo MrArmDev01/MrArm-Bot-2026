@@ -40,9 +40,8 @@ class MyBot(commands.Bot):
         # ตั้งค่าสถานะ Streaming สำหรับ Nena
         # ใช้ชื่อเพลง และลิงก์ที่คุณส่งมา (Discord จะแสดงเป็นสถานะสีม่วง)
         activity = discord.Streaming(
-            name="ไอ้เด็กคนนี้ - NICK KIT 🎵",
-            url="https://open.spotify.com/track/4tZR81UBfYl1C1k2oamG8h?si=Q63-QLKlTPWvN6Yka8RHXQ"
-        )
+            name="Love You💕",
+            url="https://www.youtube.com/watch?v=F07G92S_vTo" # ลิงก์ YouTube ของเพลงนี้        )
         await self.change_presence(activity=activity)
         
         print(f'🚀 Logged in as {self.user} (Nena)')
