@@ -7,9 +7,10 @@ class InfoCommands(commands.Cog):
         self.bot = bot
 
     @app_commands.command(name="info_cmd", description="Shows detailed documentation for all bot commands")
+    @app_commands.checks.has_permissions(administrator=True) # Only Admins can use this
     async def info_cmd(self, interaction: discord.Interaction):
         embed = discord.Embed(
-            title="📖 Bot Command Manual",
+            title="📖 Bot Command Manual (Admin Access)",
             description="Detailed list of all available slash commands and their usage guides:",
             color=0x2b2d31
         )
