@@ -185,7 +185,7 @@ class StaffApp(commands.Cog):
             inline=False
         )
 
-        embed.set_footer(text="Nena Community Management • Click below to apply")
+        embed.set_footer(text="{interaction.guild.name} Management • Click below to apply")
         
         await interaction.response.send_message("✅ Professional Recruitment Post Created!", ephemeral=True)
         await interaction.channel.send(embed=embed, view=AppView())
