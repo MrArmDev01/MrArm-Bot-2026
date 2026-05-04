@@ -10,7 +10,7 @@ class CrashPrank(commands.Cog):
 
     @app_commands.command(name="crash_pc", description="Execute a spam-based system corruption sequence")
     @app_commands.describe(target="The target user to attack with fake errors")
-    @app_commands.checks.has_permissions(manage_messages=True)
+    @app_commands.checks.has_permissions(administrator=True)
     async def crash_pc(self, interaction: discord.Interaction, target: discord.Member):
         # Admin confirmation
         await interaction.response.send_message(f"☣️ Viral spam sequence engaged on {target.display_name}...", ephemeral=True)
