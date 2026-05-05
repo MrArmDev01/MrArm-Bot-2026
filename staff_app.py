@@ -70,7 +70,7 @@ class AppModal(ui.Modal):
         embed.add_field(name="3. Past Experience", value=self.experience.value, inline=False)
         embed.add_field(name="4. Why should we choose you?", value=self.reason.value, inline=False)
         embed.add_field(
-            name=f"🕵️ Scenario Response ({self.scenario['id']})", 
+            name=f"Scenario Response ({self.scenario['id']})", 
             value=f"**Situation:** {self.scenario['topic']}\n\n**Candidate's Answer:**\n{self.scenario_input.value}", 
             inline=False
         )
@@ -159,7 +159,7 @@ class StaffApp(commands.Cog):
         guild_name = interaction.guild.name
         
         embed = discord.Embed(
-            title=f"⚔️ {guild_name.upper()} STAFF RECRUITMENT",
+            title=f" {guild_name.upper()} STAFF RECRUITMENT",
             description=(
                 f"We are looking for dedicated, mature, and active individuals to join our "
                 f"Management Team. If you have a passion for helping others and want to "
@@ -169,19 +169,18 @@ class StaffApp(commands.Cog):
         )
 
         embed.add_field(
-            name="📋 REQUIREMENTS",
+            name="📋 Requirements",
             value=(
                 "• Must be at least 15 years old.\n"
                 "• Must be active and helpful in text/voice channels.\n"
                 "• Ability to stay calm and professional under pressure.\n"
                 "• Good understanding of our server rules.\n"
-                "• At least 2-3 hours of availability per day."
             ),
             inline=False
         )
 
         embed.add_field(
-            name="🛠️ RESPONSIBILITIES",
+            name="🛠️ Responsibilities",
             value=(
                 "• Monitor channels and maintain a friendly environment.\n"
                 "• Assist members with questions or issues.\n"
