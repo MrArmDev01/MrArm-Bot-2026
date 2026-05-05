@@ -24,7 +24,8 @@ class MyBot(commands.Bot):
             'staff_system',
             'info_commands',
             'announce',
-            'afk'
+            'afk',
+            'purg'
         ]
         
         for ext in extensions:
