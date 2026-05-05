@@ -1,5 +1,7 @@
 discord.py
 Pillow
 requests
-pip install -U g4f
+g4f
+nest_asyncio
+aiohttp
 
