@@ -29,7 +29,6 @@ class PayoutSystem(commands.Cog):
                 f"✅ **Robux Payout Completed Successfully!**\n\n"
                 f"Dear **{self.target_user.display_name}**,\n"
                 f"The administration has finalized your payout of **{self.amount:,} Robux**. "
-                f"Please note that according to Roblox's policy, pending funds may take **3-7 days** to reflect in your total balance.\n\n"
                 f"**Transaction Summary:**\n"
                 f"• Amount: `{self.amount:,} Robux`\n"
                 f"• Status: `Distributed`\n"
