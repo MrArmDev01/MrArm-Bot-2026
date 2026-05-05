@@ -22,7 +22,8 @@ class MyBot(commands.Bot):
             'staff_app',
             'moderation',
             'staff_system',
-            'info_commands'
+            'info_commands',
+            'announce'
         ]
         
         for ext in extensions:
