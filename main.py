@@ -19,7 +19,8 @@ class MyBot(commands.Bot):
             'starboard',
             'bot_admin',
             'info_cmd',
-            'staff_app'
+            'staff_app',
+            'moderation'
         ]
         
         for ext in extensions:
