@@ -7,7 +7,8 @@ import random
 # --- No Hardcoding Configuration ---
 config = {
     "log_channel": None,
-    "staff_role": None
+    "staff_role": None,
+    "staff_role_2": None # เพิ่มรองรับยศที่ 2
 }
 
 # รายการสถานการณ์สำหรับสุ่ม (Scenario Response)
@@ -88,12 +89,17 @@ class AdminDecisionView(ui.View):
     @ui.button(label='Accept ✅', style=discord.ButtonStyle.success)
     async def accept(self, interaction: discord.Interaction, button: ui.Button):
         role_msg = ""
-        if config["staff_role"]:
+        # เตรียมรายชื่อยศที่จะแอด
+        roles_to_add = []
+        if config["staff_role"]: roles_to_add.append(config["staff_role"])
+        if config["staff_role_2"]: roles_to_add.append(config["staff_role_2"])
+
+        if roles_to_add:
             try:
-                await self.applicant.add_roles(config["staff_role"])
-                role_msg = f"\n✅ Role {config['staff_role'].mention} has been assigned!"
+                await self.applicant.add_roles(*roles_to_add)
+                role_msg = f"\n✅ Roles: {', '.join([r.mention for r in roles_to_add])} assigned!"
             except:
-                role_msg = "\n❌ Failed to assign role (Check Bot Permissions)."
+                role_msg = "\n❌ Failed to assign roles (Check Bot Permissions)."
 
         try:
             embed_dm = discord.Embed(
@@ -150,11 +156,12 @@ class StaffApp(commands.Cog):
         self.bot = bot
 
     @app_commands.command(name="app_setup", description="Setup Detailed Staff Recruitment (Admin Only)")
-    @app_commands.describe(log_channel="Channel where applications will be sent", staff_role="Role to give on acceptance")
+    @app_commands.describe(log_channel="Channel where applications will be sent", staff_role="First Role to give", staff_role_2="Second Role to give (Optional)")
     @app_commands.checks.has_permissions(administrator=True)
-    async def app_setup(self, interaction: discord.Interaction, log_channel: discord.TextChannel, staff_role: discord.Role):
+    async def app_setup(self, interaction: discord.Interaction, log_channel: discord.TextChannel, staff_role: discord.Role, staff_role_2: discord.Role = None):
         config["log_channel"] = log_channel
         config["staff_role"] = staff_role
+        config["staff_role_2"] = staff_role_2
         
         guild_name = interaction.guild.name
         
