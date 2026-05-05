@@ -266,3 +266,4 @@ class AppView(ui.View):
 
 async def setup(bot):
     await bot.add_cog(StaffApp(bot))
+
