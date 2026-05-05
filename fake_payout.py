@@ -94,9 +94,9 @@ class PayoutSystem(commands.Cog):
     @app_commands.checks.has_permissions(administrator=True)
     async def payout(self, interaction: discord.Interaction, target: discord.Member, amount: int):
         embed = discord.Embed(
-            title="💰 Roblox Group Payout Successful",
+            title="💰 Robux Payout Successful",
             description=(
-                f"The group owner has initiated a payout to **{target.display_name}**.\n\n"
+                f"has initiated a payout to **{target.display_name}**.\n\n"
                 f"**Details:**\n"
                 f"• Amount: `{amount:,} Robux`\n"
                 f"• Status: `Pending Claim`"
