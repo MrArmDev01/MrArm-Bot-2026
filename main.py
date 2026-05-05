@@ -59,3 +59,4 @@ if TOKEN:
     bot.run(TOKEN)
 else:
     print("❌ Error: DISCORD_TOKEN not found in environment variables.")
+
