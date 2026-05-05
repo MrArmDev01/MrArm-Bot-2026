@@ -38,3 +38,4 @@ class FreeAIChat(commands.Cog):
 
 async def setup(bot):
     await bot.add_cog(FreeAIChat(bot))
+
