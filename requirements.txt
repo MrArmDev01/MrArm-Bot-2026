@@ -1,3 +1,5 @@
 discord.py
 Pillow
 requests
+pip install -U g4f
+
