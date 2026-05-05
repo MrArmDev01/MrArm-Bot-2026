@@ -26,7 +26,8 @@ class MyBot(commands.Bot):
             'announce',
             'afk',
             'purg',
-            'noping'
+            'noping',
+            'utilities'
         ]
         
         for ext in extensions:
