@@ -1,122 +1,77 @@
 import discord
-from discord import app_commands, ui
+from discord import app_commands
 from discord.ext import commands
-import datetime
 
-# --- Configuration สำหรับเก็บข้อมูล Warn ---
-# (หมายเหตุ: ข้อมูลจะหายถ้าบอท Restart หากต้องการให้จำตลอดไปต้องใช้ Database ครับ)
-warn_data = {} 
-
-# --- 1. ระบบ Rules (เมนูเลือกกฎ) ---
-class RulesDropdown(ui.Select):
-    def __init__(self):
-        options = [
-            discord.SelectOption(
-                label='Minor Moderator', 
-                description='General rules and behavior guidelines.', 
-                emoji='📜'
-            ),
-            discord.SelectOption(
-                label='Moderator', 
-                description='Rules for staff conduct and moderation.', 
-                emoji='🛡️'
-            ),
-            discord.SelectOption(
-                label='Major Moderator', 
-                description='Severe violations and strict community rules.', 
-                emoji='🚫'
-            ),
-        ]
-        super().__init__(placeholder='Select a rule category to read...', min_values=1, max_values=1, options=options)
-
-    async def callback(self, interaction: discord.Interaction):
-        # ตั้งค่าเนื้อหากฎแต่ละประเภท
-        if self.values[0] == 'Minor Moderator':
-            title, desc, color = "📜 Minor Moderator Rules", "1. No spamming or flooding chat.\n2. Be respectful to all members.\n3. No excessive use of CAPS.", 0x3498db
-        elif self.values[0] == 'Moderator':
-            title, desc, color = "🛡️ Moderator Rules", "1. Do not abuse staff permissions.\n2. Always log moderation actions.\n3. Stay neutral during conflicts.", 0x2ecc71
-        else:
-            title, desc, color = "🚫 Major Moderator Rules", "1. No raiding or malicious activities.\n2. No NSFW content allowed.\n3. No illegal content or harassment.", 0xe74c3c
-        
-        embed = discord.Embed(title=title, description=desc, color=color)
-        embed.set_footer(text="Please follow the rules to keep the community safe.")
-        # ส่งแบบ Ephemeral (เห็นเฉพาะคนที่กด) เพื่อไม่ให้รกห้อง
-        await interaction.response.send_message(embed=embed, ephemeral=True)
-
-class RulesView(ui.View):
-    def __init__(self):
-        super().__init__(timeout=None)
-        self.add_item(RulesDropdown())
-
-# --- 2. ระบบ Cog (คำสั่ง set_rules และ warn) ---
-class ModerationSystem(commands.Cog):
+class RulesSystem(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    # คำสั่งส่งกฎ (Embed + Dropdown)
-    @app_commands.command(name="set_rules", description="Post the server rules with a dropdown menu")
+    @app_commands.command(name="set_rules", description="Post professional server rules based on hierarchy")
+    @app_commands.describe(
+        manager_role="The Manager role to display", 
+        admin_role="The Administrator role to display", 
+        mod_role="The Moderator role to display"
+    )
     @app_commands.checks.has_permissions(administrator=True)
-    async def set_rules(self, interaction: discord.Interaction):
-        embed = discord.Embed(
-            title="📖 Server Rules & Guidelines",
-            description=(
-                "Welcome to our community! To ensure a safe environment for everyone, "
-                "please read and follow our rules.\n\n"
-                "**Please select a category below to view the specific rules.**"
-            ),
-            color=0x2f3136
-        )
-        embed.set_footer(text="Compliance with these rules is mandatory.")
+    async def set_rules(self, interaction: discord.Interaction, manager_role: discord.Role, admin_role: discord.Role, mod_role: discord.Role):
+        guild = interaction.guild
         
-        await interaction.response.send_message("✅ Rules menu has been posted!", ephemeral=True)
-        await interaction.channel.send(embed=embed, view=RulesView())
-
-    # คำสั่งเตือน (Warn)
-    @app_commands.command(name="warn", description="Warn a member for a rule violation")
-    @app_commands.checks.has_permissions(manage_messages=True)
-    async def warn(self, interaction: discord.Interaction, member: discord.Member, reason: str):
-        if member.bot:
-            return await interaction.response.send_message("❌ You cannot warn a bot.", ephemeral=True)
-
-        user_id = str(member.id)
-        if user_id not in warn_data:
-            warn_data[user_id] = []
+        # --- Embed 1: Main Rules & Hierarchy ---
+        embed1 = discord.Embed(title=f"{guild.name} Rules", color=0x2f3136)
+        embed1.add_field(name=" Main Rules", value=(
+            "• All members must abide by both the Discord TOS & server's rules.\n"
+            "• Finding or attempting to find loopholes in the rules will result in punishment.\n"
+            "• Everybody must follow the rules including staff members; no one is above the rules.\n"
+            "• Staff have the final saying in any predicament."
+        ), inline=False)
         
-        warn_data[user_id].append({
-            "reason": reason,
-            "admin": interaction.user.name,
-            "time": datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
-        })
-
-        count = len(warn_data[user_id])
+        embed1.add_field(name="⚠️ Warning System", value=(
+            "• **Verbal Warning**\n"
+            "• **1st Logged Warning:** Nothing\n"
+            "• **3nd Logged Warning:** 2 Hour Mute\n"
+            "• **5rd Logged Warning:** 6 Hour Mute\n"
+            "• **7th Logged Warning:** 1 Day Ban"
+        ), inline=False)
         
-        embed = discord.Embed(title="⚠️ Member Warned", color=0xf1c40f)
-        embed.add_field(name="User", value=member.mention, inline=True)
-        embed.add_field(name="Total Warnings", value=str(count), inline=True)
-        embed.add_field(name="Reason", value=reason, inline=False)
-        embed.set_footer(text=f"Warned by {interaction.user.name}")
-        
-        await interaction.response.send_message(embed=embed)
+        embed1.add_field(name="Chain Of Command", value=(
+            f"• {manager_role.mention}\n"
+            f"• {admin_role.mention}\n"
+            f"• {mod_role.mention}"
+        ), inline=False)
 
-        # ส่งข้อความไปบอกผู้ที่โดนเตือน
-        try:
-            await member.send(f"⚠️ You have been warned in **{interaction.guild.name}**\n**Reason:** {reason}\n**Total Warnings:** {count}")
-        except:
-            pass # ถ้าผู้ใช้ปิด DM บอทจะข้ามไป
+        # --- Embed 2: Minor Infractions ---
+        embed2 = discord.Embed(title="🟢 Minor Infractions", description=(
+            "**1. Spreading False Information:** Spreading false info about updates, codes, etc.\n"
+            "**2. Flooding/Spamming:** Sending messages that result in covering the chat.\n"
+            "**3. Chaining:** When multiple members send the same message or GIF.\n"
+            "**4. Channel Misuse:** Using a channel not for its intended purpose.\n"
+            "**5. Toxicity/Ragebait:** Causing drama in the community or being toxic."
+        ), color=0x2ecc71)
+        embed2.set_footer(text="Violations result in a verbal warning or temporary mute.")
 
-    # คำสั่งเช็กประวัติการเตือน
-    @app_commands.command(name="warns", description="Check warning history of a member")
-    async def check_warns(self, interaction: discord.Interaction, member: discord.Member):
-        user_id = str(member.id)
-        if user_id not in warn_data or not warn_data[user_id]:
-            return await interaction.response.send_message(f"✅ **{member.display_name}** has no warning history.", ephemeral=True)
+        # --- Embed 3: Moderate Infractions ---
+        embed3 = discord.Embed(title="🟡 Moderate Infractions", description=(
+            "**1. NSFW Comments:** Sending sexual comments or references.\n"
+            "**2. Bypassing:** Attempting to bypass banned words through creative spelling.\n"
+            "**3. Public Disputes with Staff:** Arguing with staff over punishments in public.\n"
+            "**4. Mass Pinging:** Pinging someone repeatedly or multiple people (6+).\n"
+            "**5. Sensitive Topics:** Discussing subjects like religion, gender, or politics."
+        ), color=0xf1c40f)
+        embed3.set_footer(text="Violations result in a warning, a mute, or a combination of both.")
 
-        history = ""
-        for i, entry in enumerate(warn_data[user_id], 1):
-            history += f"**{i}.** {entry['reason']} (by {entry['admin']} on {entry['time']})\n"
+        # --- Embed 4: Major Infractions ---
+        embed4 = discord.Embed(title="🔴 Major Infractions", description=(
+            "**1. Suicide Encouragement:** Requesting or encouraging self-harm.\n"
+            "**2. Doxxing:** Attempting to dox or any threats of Doxxing.\n"
+            "**3. NSFW Contents:** Explicit images, videos, or messages.\n"
+            "**4. Black Marketing:** Buying/Selling products for real currency.\n"
+            "**5. Phishing Links:** Sending malicious or scam links.\n"
+            "**6. Discrimination:** Attacks against specific groups, race, or religion."
+        ), color=0xe74c3c)
+        embed4.set_footer(text="Violations in this category result in an IMMEDIATE BAN.")
 
-        embed = discord.Embed(title=f"📋 Warn History: {member.display_name}", description=history, color=0xe74c3c)
-        await interaction.response.send_message(embed=embed, ephemeral=True)
+        await interaction.response.send_message("✅ Sending Rules Embeds...", ephemeral=True)
+        await interaction.channel.send(embeds=[embed1, embed2, embed3, embed4])
 
 async def setup(bot):
-    await bot.add_cog(ModerationSystem(bot))
+    await bot.add_cog(RulesSystem(bot))
