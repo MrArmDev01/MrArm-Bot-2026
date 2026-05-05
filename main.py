@@ -20,7 +20,8 @@ class MyBot(commands.Bot):
             'bot_admin',
             'info_cmd',
             'staff_app',
-            'moderation'
+            'moderation',
+            'staff_system'
         ]
         
         for ext in extensions:
