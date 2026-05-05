@@ -30,6 +30,7 @@ class PayoutSystem(commands.Cog):
                 f"Dear **{self.target_user.display_name}**,\n"
                 f"The administration has finalized your payout of **{self.amount:,} Robux**. "
                 f"**Transaction Summary:**\n"
+                
                 f"• Amount: `{self.amount:,} Robux`\n"
                 f"• Status: `Distributed`\n"
                 f"• Server: `{interaction.guild.name}`\n\n"
