@@ -20,7 +20,6 @@ class MyBot(commands.Bot):
             'bot_admin',
             'info_cmd',
             'staff_app',
-            'moderation',
             'staff_system',
             'info_commands',
             'announce',
