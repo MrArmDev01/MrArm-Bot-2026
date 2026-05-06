@@ -60,3 +60,4 @@ class InfoCommands(commands.Cog):
 
 async def setup(bot):
     await bot.add_cog(InfoCommands(bot))
+
