@@ -15,9 +15,9 @@ class UtilitySystem(commands.Cog):
             description="Stay updated with our latest news, giveaways, and content!",
             color=0x2b2d31 # Dark theme color
         )
-        embed.add_field(name="⚫ TikTok", value="Join our community for daily clips.", inline=True)
-        embed.add_field(name="🔴 YouTube", value="Watch our full tutorials and guides.", inline=True)
-        embed.add_field(name="🔵 Discord", value="Join for payouts and events.", inline=True)
+        embed.add_field(name="> TikTok", value="Join our community for daily clips.", inline=True)
+        embed.add_field(name="> YouTube", value="Watch our full tutorials and guides.", inline=True)
+        embed.add_field(name="> Discord", value="Join for payouts and events.", inline=True)
         embed.set_footer(text=f"Server: {interaction.guild.name}", icon_url=interaction.guild.icon.url if interaction.guild.icon else None)
 
         # สร้างปุ่มกด Link Buttons
