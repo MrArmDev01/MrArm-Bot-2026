@@ -63,24 +63,5 @@ class UtilitySystem(commands.Cog):
         
         await interaction.response.send_message(embed=embed)
 
-    # --- 31. Notification Simulator (Announcement Format) ---
-    @app_commands.command(name="notify_test", description="Test how a YouTube/TikTok notification looks")
-    async def notify_test(self, interaction: discord.Interaction):
-        embed = discord.Embed(
-            title="🔴 New Video Uploaded!",
-            description="**How to claim your rewards in 2026!**\nDon't forget to like and subscribe for more updates.",
-            color=0xFF0000, # YouTube Red
-            timestamp=datetime.datetime.now()
-        )
-        # ตัวอย่างรูป Thumbnail ขนาดใหญ่
-        embed.set_image(url="https://images.rbxcdn.com/f7528a4be46b1464c185bb5e30b135c3.png") 
-        embed.set_author(name="Your Channel Name", icon_url=interaction.guild.icon.url if interaction.guild.icon else None)
-        embed.set_footer(text="YouTube Notification")
-
-        view = discord.ui.View()
-        view.add_item(discord.ui.Button(label="Watch Now", url="https://youtube.com", style=discord.ButtonStyle.link))
-
-        await interaction.response.send_message(embed=embed, view=view)
-
 async def setup(bot):
     await bot.add_cog(UtilitySystem(bot))
