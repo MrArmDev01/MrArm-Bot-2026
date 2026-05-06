@@ -28,7 +28,8 @@ class MyBot(commands.Bot):
             'noping',
             'utilities',
             'ai_chat_free',
-            'booster_system'
+            'booster_system',
+            'goal_tracker,
         ]
         
         for ext in extensions:
