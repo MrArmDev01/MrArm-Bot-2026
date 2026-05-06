@@ -24,7 +24,7 @@ class UtilitySystem(commands.Cog):
         view = discord.ui.View()
         view.add_item(discord.ui.Button(label="TikTok", url="https://www.tiktok.com/@mr.armxso?_r=1&_t=ZS-9687KlsdpET", style=discord.ButtonStyle.link))
         view.add_item(discord.ui.Button(label="YouTube", url="https://youtube.com/@mrarmxso?si=TLpVkaK4Ik44lR1U", style=discord.ButtonStyle.link))
-        view.add_item(discord.ui.Button(label="Discord", url="https://discord.gg/QsqDgSvFYy", style=discord.ButtonStyle.link))
+        view.add_item(discord.ui.Button(label="Discord", url="https://discord.gg/CtgTaxcEkd", style=discord.ButtonStyle.link))
         
         await interaction.response.send_message(embed=embed, view=view)
 
