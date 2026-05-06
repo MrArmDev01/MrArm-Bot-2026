@@ -24,7 +24,7 @@ class ServerSetup(commands.Cog):
             "========== STAFF ==========",
             "HEAD OF STAFF", "Senior Moderator", "Moderator", "Junior Moderator",
             "========== OTHER ==========",
-            "CC Manager", "Content Creator", "TESTER", "Server Booster",
+            "CC Manager", "Leader Tester", "Tester",  "Verified Creator", "Content Creator", "Artist", 
             "========== Helpers ==========",
             "Trello Manager", "Helper Lead", "Trello Team", "Giveaway Host",
             "========== LEVELS ==========",
