@@ -110,7 +110,7 @@ class StaffGuidelinesView(discord.ui.View):
         super().__init__(timeout=None)
         self.add_item(StaffDropdown())
 
-class StaffSystem(commands.Cog):
+class StaffGuidelinesManual(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
@@ -130,4 +130,4 @@ class StaffSystem(commands.Cog):
         await interaction.response.send_message(embed=embed, view=StaffGuidelinesView())
 
 async def setup(bot):
-    await bot.add_cog(StaffSystem(bot))
+    await bot.add_cog(StaffGuidelinesManual(bot))
