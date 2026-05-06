@@ -8,8 +8,8 @@ class FreeAIChat(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @app_commands.command(name="ask", description="ถาม AI ได้ทุกเรื่อง (ChatGPT Free Edition)")
-    @app_commands.describe(prompt="พิมพ์ข้อความที่ต้องการถาม...")
+    @app_commands.command(name="ask", description="Ask AI anything")
+    @app_commands.describe(prompt="Type the question you want to ask")
     async def ask(self, interaction: discord.Interaction, prompt: str):
         # แจ้งบอทกำลังคิด
         await interaction.response.defer(thinking=True)
@@ -22,7 +22,7 @@ class FreeAIChat(commands.Cog):
             )
             
             if not response or len(str(response).strip()) == 0:
-                response = "ขออภัยครับ ขณะนี้เซิร์ฟเวอร์ AI หนาแน่นเกินไป กรุณาลองใหม่อีกครั้งในอีก 1-2 นาทีครับ"
+                response = "Sorry, the AI server is currently overloaded. Please try again in 1-2 minutes"
 
             # ตรวจสอบความยาวข้อความ
             response_text = str(response)
@@ -40,7 +40,7 @@ class FreeAIChat(commands.Cog):
 
         except Exception as e:
             print(f"AI Error Detail: {e}")
-            await interaction.followup.send("❌ ระบบ AI ขัดข้องเนื่องจากการเชื่อมต่อหนาแน่น โปรดลองใช้คำถามอื่นหรือลองใหม่ภายหลังครับ")
+            await interaction.followup.send("❌ The AI system is experiencing a connection congestion issue. Please try a different question or try again later")
 
     # ระบบตอบกลับเมื่อมีการ Tag บอท
     @commands.Cog.listener()
