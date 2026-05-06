@@ -17,14 +17,14 @@ class UtilitySystem(commands.Cog):
         )
         embed.add_field(name="⚫ TikTok", value="Join our community for daily clips.", inline=True)
         embed.add_field(name="🔴 YouTube", value="Watch our full tutorials and guides.", inline=True)
-        embed.add_field(name="🔵 Roblox Group", value="Join for payouts and events.", inline=True)
+        embed.add_field(name="🔵 Discord", value="Join for payouts and events.", inline=True)
         embed.set_footer(text=f"Server: {interaction.guild.name}", icon_url=interaction.guild.icon.url if interaction.guild.icon else None)
 
         # สร้างปุ่มกด Link Buttons
         view = discord.ui.View()
-        view.add_item(discord.ui.Button(label="TikTok", url="https://www.tiktok.com/", style=discord.ButtonStyle.link))
-        view.add_item(discord.ui.Button(label="YouTube", url="https://www.youtube.com/", style=discord.ButtonStyle.link))
-        view.add_item(discord.ui.Button(label="Roblox Group", url="https://www.roblox.com/groups/", style=discord.ButtonStyle.link))
+        view.add_item(discord.ui.Button(label="TikTok", url="https://www.tiktok.com/@mr.armxso?_r=1&_t=ZS-9687KlsdpET", style=discord.ButtonStyle.link))
+        view.add_item(discord.ui.Button(label="YouTube", url="https://youtube.com/@mrarmxso?si=TLpVkaK4Ik44lR1U", style=discord.ButtonStyle.link))
+        view.add_item(discord.ui.Button(label="Discord", url="https://discord.gg/QsqDgSvFYy", style=discord.ButtonStyle.link))
         
         await interaction.response.send_message(embed=embed, view=view)
 
