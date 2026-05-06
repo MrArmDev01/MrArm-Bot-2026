@@ -18,7 +18,7 @@ class ServerSetup(commands.Cog):
         # 🆕 ส่วนเพิ่มเติม: สร้างยศและเรียงลำดับตามรูป
         # ==============================================
         role_names = [
-            "Owner", "Manager", "-", "Assistant Manager",
+            "Owner", "Manager", "Lead Developer", "Developer", "Assistant Manager",
             "========== BOT ==========",
             "Administrator",
             "========== STAFF ==========",
@@ -28,7 +28,7 @@ class ServerSetup(commands.Cog):
             "========== Helpers ==========",
             "Trello Manager", "Helper Lead", "Trello Team", "Giveaway Host",
             "========== LEVELS ==========",
-            "Radiant", "Immortal", "Radiant", "Diamond", "Platinum", "Gold", "Silver", "Bronze",
+            "N/A Level 100", "N/A Level 85", "N/A Level 65", "N/A Level 45", "N/A Level 35", "N/A Level 25", "N/A Level 15", "N/A Level 5",
             "========== STATUS ==========",
             "Verified", "Unverified",
             "========== INTERNATIONAL ==========",
