@@ -29,6 +29,7 @@ class MyBot(commands.Bot):
             'utilities',
             'ai_chat_free',
             'booster_system',
+            'giveaway.py'
         ]
         
         for ext in extensions:
