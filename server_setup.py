@@ -58,7 +58,7 @@ class ServerSetup(commands.Cog):
         r_verified = created_roles["Verified"]
         r_staff = created_roles["========== STAFF =========="]
         r_cc = created_roles["========== OTHER =========="] # ใช้ OTHER เป็นฐานของ CC
-        r_tester = created_roles["TESTER"]
+        r_tester = created_roles["Tester"]
 
         # ==============================================
         # 🆕 ส่วนเพิ่มเติม: ตั้งค่าสิทธิ์ (Permissions)
