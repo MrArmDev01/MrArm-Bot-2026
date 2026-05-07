@@ -169,4 +169,5 @@ class ServerSetup(commands.Cog):
 
 async def setup(bot):
     await bot.add_cog(ServerSetup(bot))
+
     
