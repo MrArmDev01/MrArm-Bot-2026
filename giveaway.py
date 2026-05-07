@@ -72,8 +72,8 @@ class GiveawayPro(commands.Cog):
         # สร้าง Embed ดีไซน์หรูหรา
         embed = discord.Embed(
             title="🎊 GIVEAWAY 🎊",
-            description=f"Participate to win a **{prize}**
-            color=0x5865F2
+            description=f"Participate to win a **{prize}**,
+    color=0x5865F2
         )
         
         # ใส่ข้อมูลแบบ Grid
