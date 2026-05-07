@@ -28,7 +28,6 @@ class GiveawayView(discord.ui.View):
         if user.id in giveaway["participants"]:
             return await interaction.response.send_message("⚠️ You have already joined!", ephemeral=True)
 
-        # เช็กยศ (ถ้ามีการระบุไว้)
         if giveaway.get("role_id"):
             required_role = interaction.guild.get_role(giveaway["role_id"])
             if required_role not in user.roles:
@@ -47,7 +46,7 @@ class GiveawayPro(commands.Cog):
             with open(DATA_FILE, "w") as f:
                 json.dump({}, f)
 
-    @app_commands.command(name="giveaway", description="Start a professional giveaway with optional conditions")
+    @app_commands.command(name="giveaway", description="Start a professional giveaway")
     @app_commands.describe(
         prize="What is the prize?",
         duration_mins="Duration in minutes",
@@ -69,29 +68,26 @@ class GiveawayPro(commands.Cog):
         end_time = datetime.now() + timedelta(minutes=duration_mins)
         timestamp = int(end_time.timestamp())
 
-        # สร้าง Embed ดีไซน์หรูหรา
+        # ปรับแต่ง Embed ตามบรีฟ: ลบ "Server", ลบประโยคแนะนำ, ลบอีโมจิหน้าฟิลด์
         embed = discord.Embed(
             title="🎊 GIVEAWAY 🎊",
-            description=f"Participate to win a **{prize}**,
-    color=0x5865F2
+            description=f"Participate to win a **{prize}**",
+            color=0x5865F2
         )
         
-        # ใส่ข้อมูลแบบ Grid
-        embed.add_field(name="🎁 Prize", value=f"**{prize}**", inline=True)
+        embed.add_field(name="Prize", value=f"**{prize}**", inline=True)
         embed.add_field(name="Winners", value=f"`{winners}`", inline=True)
         embed.add_field(name="Host", value=interaction.user.mention, inline=True)
 
-        # ส่วนเงื่อนไข (จะแสดงเฉพาะเมื่อระบุ)
+        # คงความสวยงามของลูกศร/กระสุนไว้ในส่วนเงื่อนไข
         reqs = []
         if role_required: reqs.append(f"• Role: {role_required.mention}")
         if invite_required > 0: reqs.append(f"• Invites: `{invite_required}`")
         if reqs:
-            embed.add_field(name=" Requirements", value="\n".join(reqs), inline=False)
+            embed.add_field(name="Required", value="\n".join(reqs), inline=False)
 
-        # เวลาจบกิจกรรม
-        embed.add_field(name=" Ends In", value=f"<t:{timestamp}:R> (<t:{timestamp}:f>)", inline=False)
+        embed.add_field(name="End In", value=f"<t:{timestamp}:R> (<t:{timestamp}:f>)", inline=False)
 
-        # ใส่รูปภาพ (ถ้ามี)
         if image_url and image_url.startswith("http"):
             embed.set_image(url=image_url)
         
@@ -100,10 +96,9 @@ class GiveawayPro(commands.Cog):
 
         embed.set_footer(text=f"Giveaway ID: {interaction.id}")
 
-        await interaction.response.send_message("Giveaway has been announced!", ephemeral=True)
+        await interaction.response.send_message("Giveaway started!", ephemeral=True)
         msg = await interaction.channel.send(embed=embed, view=GiveawayView())
 
-        # บันทึกข้อมูลลง JSON
         with open(DATA_FILE, "r") as f:
             data = json.load(f)
         data[str(msg.id)] = {
@@ -117,14 +112,12 @@ class GiveawayPro(commands.Cog):
         with open(DATA_FILE, "w") as f:
             json.dump(data, f, indent=4)
 
-        # รอเวลาจบ
         await asyncio.sleep(duration_mins * 60)
         await self.process_winner(msg.id)
 
     async def process_winner(self, msg_id):
         with open(DATA_FILE, "r") as f:
             data = json.load(f)
-        
         if str(msg_id) not in data: return
         
         giveaway = data[str(msg_id)]
@@ -142,15 +135,13 @@ class GiveawayPro(commands.Cog):
             winners = random.sample(participants, min(len(participants), giveaway["winners_count"]))
             winner_text = ", ".join([f"<@{w}>" for w in winners])
 
-        # อัปเดต Embed เมื่อจบกิจกรรม
-        old_embed = msg.embeds[0]
         end_embed = discord.Embed(
             title="🎊 GIVEAWAY ENDED 🎊",
-            description=f"Prize: **{giveaway['prize']}**\nWinners: {winner_text}\nHosted by: <@{giveaway['host_id']}>",
+            description=f"Prize: **{giveaway['prize']}**\nWinners: {winner_text}\nHost: <@{giveaway['host_id']}>",
             color=0x2b2d31
         )
-        if old_embed.image:
-            end_embed.set_image(url=old_embed.image.url)
+        if msg.embeds[0].image:
+            end_embed.set_image(url=msg.embeds[0].image.url)
 
         await msg.edit(embed=end_embed, view=None)
         if winner_text != "Not enough participants.":
