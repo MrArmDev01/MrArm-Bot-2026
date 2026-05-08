@@ -4,4 +4,4 @@ requests
 g4f
 nest_asyncio
 aiohttp
-
+flask
