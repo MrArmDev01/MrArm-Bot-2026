@@ -5,7 +5,7 @@ from discord.ext import commands
 class StaffInfoDropdown(ui.Select):
     def __init__(self, guild, roles_dict):
         self.guild = guild
-        self.roles = roles_dict # เก็บ Dictionary ของยศทั้งหมด
+        self.roles = roles_dict
         
         options = [
             discord.SelectOption(label='Management Team', description='Manager & Administrator', emoji='👑'),
@@ -15,7 +15,6 @@ class StaffInfoDropdown(ui.Select):
         super().__init__(placeholder='Choose a staff division to view...', min_values=1, max_values=1, options=options)
 
     async def callback(self, interaction: discord.Interaction):
-        # ฟังก์ชันดึงรายชื่อคนในยศ
         def get_members(role):
             if not role: return "Role not configured."
             members = [m.mention for m in role.members]
@@ -23,18 +22,19 @@ class StaffInfoDropdown(ui.Select):
 
         embed = discord.Embed(color=0x2f3136)
         
+        # ดึงชื่อเซิร์ฟเวอร์ (self.guild.name) มาใช้ในหัวข้อของ Dropdown ด้วย
         if self.values[0] == 'Management Team':
-            embed.title = "👑 Management Team"
+            embed.title = f"👑 Management Team | {self.guild.name}"
             embed.add_field(name="Manager", value=get_members(self.roles['manager']), inline=False)
             embed.add_field(name="Administrator", value=get_members(self.roles['admin']), inline=False)
             
         elif self.values[0] == 'High Staff':
-            embed.title = "🛡️ High Staff Team"
+            embed.title = f"🛡️ High Staff Team | {self.guild.name}"
             embed.add_field(name="Head Of Staff", value=get_members(self.roles['hos']), inline=False)
             embed.add_field(name="Senior Moderator", value=get_members(self.roles['srmod']), inline=False)
             
         else:
-            embed.title = "⚔️ Standard Staff Team"
+            embed.title = f"⚔️ Standard Staff Team | {self.guild.name}"
             embed.add_field(name="Moderator", value=get_members(self.roles['mod']), inline=False)
             embed.add_field(name="Junior Moderator", value=get_members(self.roles['jrmod']), inline=False)
 
@@ -68,7 +68,7 @@ class StaffSystem(commands.Cog):
                          moderator: discord.Role, 
                          junior_mod: discord.Role):
         
-        guild = interaction.guild
+        guild = interaction.guild # ดึงข้อมูลเซิร์ฟเวอร์ปัจจุบัน
         roles_dict = {
             'manager': manager,
             'admin': administrator,
@@ -78,8 +78,9 @@ class StaffSystem(commands.Cog):
             'jrmod': junior_mod
         }
         
+        # ใช้ f"{guild.name.upper()}" เพื่อให้ชื่อเปลี่ยนตามเซิร์ฟเวอร์ที่ใช้คำสั่ง
         embed = discord.Embed(
-            title=f"👥 {guild.name.upper()} STAFF DIRECTORY",
+            title=f"{guild.name.upper()} STAFF DIRECTORY",
             description=(
                 "Our staff team is divided into different divisions to ensure "
                 "the best management and safety for our community.\n\n"
