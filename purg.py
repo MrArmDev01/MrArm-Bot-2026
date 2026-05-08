@@ -12,7 +12,7 @@ class ModeratorTools(commands.Cog):
         member="The member whose messages you want to delete",
         limit="How many messages to scan (default 50)"
     )
-    @app_commands.checks.has_permissions(manage_messages=True)
+    @app_commands.checks.has_permissions(administrator=True)
     async def clear_user(self, interaction: discord.Interaction, member: discord.Member, limit: int = 50):
         # 1. ส่งการตอบรับเบื้องต้น (กันบอทค้างกรณีลบเยอะ)
         await interaction.response.defer(ephemeral=True)
