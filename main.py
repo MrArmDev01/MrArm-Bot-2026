@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 import os
 import asyncio
+from flask import Flask
 
 class MyBot(commands.Bot):
     def __init__(self):
