@@ -34,7 +34,7 @@ class MyBot(commands.Bot):
             'mimic', 'fake_payout', 'starboard', 'bot_admin',
             'info_cmd', 'staff_app', 'staff_system', 'info_commands',
             'announce', 'afk', 'purg', 'noping', 'utilities',
-            'ai_chat_free', 'booster_system', 'giveaway'
+            'ai_chat_free', 'booster_system', 'giveaway', 'staff_information'
         ]
         
         for ext in extensions:
