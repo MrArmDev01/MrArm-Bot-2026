@@ -17,7 +17,6 @@ class GiveawayView(discord.ui.View):
 
     @discord.ui.button(label="Join Giveaway 🎉", style=discord.ButtonStyle.primary, custom_id="join_pro_giveaway")
     async def join_button(self, interaction: discord.Interaction, button: discord.ui.Button):
-        # โหลดข้อมูล Giveaway
         with open(DATA_FILE, "r", encoding="utf-8") as f:
             data = json.load(f)
         
@@ -29,24 +28,20 @@ class GiveawayView(discord.ui.View):
         user = interaction.user
         user_id = str(user.id)
 
-        # 1. เช็กว่าเข้าหรือยัง
         if user.id in giveaway["participants"]:
             return await interaction.response.send_message("⚠️ You have already joined!", ephemeral=True)
 
-        # 2. เช็กยศ (Role Required)
         if giveaway.get("role_id"):
             required_role = interaction.guild.get_role(giveaway["role_id"])
             if required_role not in user.roles:
                 return await interaction.response.send_message(f"🚫 You need the {required_role.mention} role to join!", ephemeral=True)
 
-        # 3. เช็กยอดเชิญ (Invite Required)
         invite_needed = giveaway.get("invite_count", 0)
         if invite_needed > 0:
             if os.path.exists(INVITE_FILE):
                 with open(INVITE_FILE, "r", encoding="utf-8") as f:
                     invites_data = json.load(f)
                 
-                # ดึงจำนวนคนชวน (ใช้ยอดคนชวนที่ยังอยู่ในเซิร์ฟเวอร์)
                 user_invites = invites_data.get(user_id, 0)
                 if user_invites < invite_needed:
                     return await interaction.response.send_message(
@@ -56,7 +51,6 @@ class GiveawayView(discord.ui.View):
             else:
                 return await interaction.response.send_message("⚠️ Invite tracking data not found.", ephemeral=True)
 
-        # บันทึกผู้เข้าร่วม
         giveaway["participants"].append(user.id)
         with open(DATA_FILE, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=4)
@@ -66,7 +60,7 @@ class GiveawayView(discord.ui.View):
 class GiveawayPro(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.invites = {} # เก็บ cache ลิงก์เชิญ
+        self.invites = {} 
         self.load_files()
 
     def load_files(self):
@@ -75,7 +69,6 @@ class GiveawayPro(commands.Cog):
                 with open(file, "w") as f: json.dump({}, f)
 
     async def cog_load(self):
-        # เก็บข้อมูลลิงก์เชิญทั้งหมดเมื่อบอทเริ่มทำงาน
         for guild in self.bot.guilds:
             try:
                 self.invites[guild.id] = await guild.invites()
@@ -89,23 +82,35 @@ class GiveawayPro(commands.Cog):
     async def on_member_join(self, member):
         """ตรวจจับว่าใครเป็นคนชวน"""
         guild_invites_before = self.invites.get(member.guild.id)
-        guild_invites_after = await member.guild.invites()
-        self.invites[member.guild.id] = guild_invites_after
+        
+        # --- เพิ่มการตรวจสอบป้องกัน Error ---
+        if guild_invites_before is None:
+            try:
+                self.invites[member.guild.id] = await member.guild.invites()
+            except:
+                pass
+            return
+        # ----------------------------------
 
-        for invite in guild_invites_before:
-            for new_invite in guild_invites_after:
-                if invite.code == new_invite.code and invite.uses < new_invite.uses:
-                    inviter_id = str(invite.inviter.id)
-                    
-                    # บันทึกลง invites.json
-                    with open(INVITE_FILE, "r", encoding="utf-8") as f:
-                        data = json.load(f)
-                    
-                    data[inviter_id] = data.get(inviter_id, 0) + 1
-                    
-                    with open(INVITE_FILE, "w", encoding="utf-8") as f:
-                        json.dump(data, f, indent=4)
-                    return
+        try:
+            guild_invites_after = await member.guild.invites()
+            self.invites[member.guild.id] = guild_invites_after
+
+            for invite in guild_invites_before:
+                for new_invite in guild_invites_after:
+                    if invite.code == new_invite.code and invite.uses < new_invite.uses:
+                        inviter_id = str(invite.inviter.id)
+                        
+                        with open(INVITE_FILE, "r", encoding="utf-8") as f:
+                            data = json.load(f)
+                        
+                        data[inviter_id] = data.get(inviter_id, 0) + 1
+                        
+                        with open(INVITE_FILE, "w", encoding="utf-8") as f:
+                            json.dump(data, f, indent=4)
+                        return
+        except:
+            pass
 
     @app_commands.command(name="giveaway", description="Advanced giveaway with invite check")
     @app_commands.describe(
@@ -152,7 +157,6 @@ class GiveawayPro(commands.Cog):
         await interaction.response.send_message("Giveaway started!", ephemeral=True)
         msg = await interaction.channel.send(embed=embed, view=GiveawayView(self.bot))
 
-        # บันทึกข้อมูล Giveaway
         with open(DATA_FILE, "r") as f: data = json.load(f)
         data[str(msg.id)] = {
             "prize": prize, "winners_count": winners, "participants": [],
