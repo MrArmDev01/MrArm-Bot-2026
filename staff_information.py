@@ -79,7 +79,7 @@ class StaffInformation(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @app_commands.command(name="staff_info", description="Display staff hierarchy and punishment guide")
+    @app_commands.command(name="staff_docs", description="Display staff hierarchy and punishment guide")
     @app_commands.checks.has_permissions(administrator=True)
     async def staff_info(self, interaction: discord.Interaction):
         embed = discord.Embed(
