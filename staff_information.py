@@ -74,7 +74,7 @@ class StaffInformation(commands.Cog):
         main_embed.description = (
             "This page outlines the official staff hierarchy and command authority within the server\n"
             "All staff members are required to understand and strictly follow this structure\n\n"
-            f"**Server Manager**\n{manager.mention}\n"
+            f"**Manager**\n{manager.mention}\n"
             "Holds the highest authority within the server\n"
             "Responsible for overall server management, structure, systems, and final decisions\n"
             "All staff members must comply with Server Manager instructions at all times\n\n"
